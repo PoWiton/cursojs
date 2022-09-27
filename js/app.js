@@ -19,7 +19,7 @@ while (seguir != "0") {
   }
 }
 
-let generarDescuento = prompt(`El total es  ${suma} desea aplicar un descuento\n Presione 1 para si \n Cualquier tecla para terminar`);
+let generarDescuento = prompt(`El total es $${suma} desea aplicar un descuento?\n Presione 1 para si \n Cualquier tecla para terminar`);
 if (generarDescuento == 1) {
   let porcentaje = prompt("Ingrese el porcentaje del descuento\n(el porcentaje no puede ser mayor a 100");
   precioFinal = calcDescuento(suma, porcentaje);
