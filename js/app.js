@@ -1,6 +1,7 @@
 function calcDescuento(precio, porcentaje) {
   let descuento = (precio * porcentaje) / 100;
   let precioFinal = precio - descuento;
+  descuentoFinal = descuento;
   return precioFinal;
 }
 
@@ -8,6 +9,7 @@ let i = 1;
 let suma = 0;
 let precioPLU;
 let seguir;
+let descuentoFinal;
 
 while (seguir != "0") {
   nombrePLU = prompt("Ingrese el nombre del PLU");
@@ -26,4 +28,5 @@ if (generarDescuento == 1) {
 } else {
   alert(`Cantidad de articulos ${i} \nSu Total es $${suma} `);
 }
-alert(`Cantidad de articulos ${i} \nSu Total es $${precioFinal} `);
+
+alert(`Cantidad de articulos ${i} \nSu descuento es $${descuentoFinal}\nSu Total es $${precioFinal} `);
