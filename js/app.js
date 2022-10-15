@@ -1,32 +1,101 @@
-function calcDescuento(precio, porcentaje) {
-  let descuento = (precio * porcentaje) / 100;
-  let precioFinal = precio - descuento;
-  descuentoFinal = descuento;
-  return precioFinal;
+function calcDescuento() {
+  let descuento = (total * document.getElementById("valDescuento").value) / 100;
+  let precioFinal = total - descuento;
+  let tablaTotal = document.getElementById("trTotal");
+  tablaTotal.innerHTML = "";
+  tablaTotal.innerHTML = `<tr>
+                            <td></td>
+                            <td></td>
+                            <td class="table-light">Descuento $ ${descuento}</td>
+                            <td class="table-light">Total  $ ${precioFinal}</td>`;
+  lista.length = 0;
 }
 
-let i = 1;
-let suma = 0;
-let precioPLU;
-let seguir;
-let descuentoFinal;
+class Item {
+  nombre;
+  precio;
+  cantidad;
+  rubro;
+}
 
-while (seguir != "0") {
-  nombrePLU = prompt("Ingrese el nombre del PLU");
-  precioPLU = parseFloat(prompt("Ingrese el precio del PLU"));
-  suma = suma + precioPLU;
-  seguir = prompt("Desea cerrar el comprobante ?\nIngrese 0 para finalizar comprobante\nPresione cualquier tecla para seguir");
-  if (seguir != "0") {
-    i++;
+function ingresoPlu() {
+  let plu = new Item();
+  total = 0;
+  plu.nombre = document.getElementById("descripcion").value;
+  plu.precio = document.getElementById("precio").value * document.getElementById("cantidad").value;
+  plu.cantidad = document.getElementById("cantidad").value;
+  plu.rubro = document.getElementById("rubro").value;
+  document.getElementById("descripcion").value = "";
+  document.getElementById("precio").value = "";
+  document.getElementById("cantidad").value = 1;
+  document.getElementById("rubro").value = "";
+  return plu;
+}
+
+function cargoPlu(lista) {
+  if (
+    document.getElementById("precio").value &&
+    document.getElementById("rubro").value &&
+    document.getElementById("cantidad").value &&
+    document.getElementById("descripcion").value != ""
+  ) {
+    let plu;
+    plu = ingresoPlu();
+    lista.push(plu);
+    suma(lista);
+    cargarTabla(lista);
   }
 }
 
-let generarDescuento = prompt(`El total es $${suma} desea aplicar un descuento?\n Presione 1 para si \n Cualquier tecla para terminar`);
-if (generarDescuento == 1) {
-  let porcentaje = prompt("Ingrese el porcentaje del descuento\n(el porcentaje no puede ser mayor a 100");
-  precioFinal = calcDescuento(suma, porcentaje);
-} else {
-  alert(`Cantidad de articulos ${i} \nSu Total es $${suma} `);
+function cargarTabla(lista) {
+  let tabla = document.getElementById("trRow");
+  tabla.innerHTML = "";
+  lista.forEach((element) => {
+    tabla.innerHTML += `
+                    <tr>
+                       <td> ${element.cantidad}</td>  
+                       <td> ${element.nombre}</td> 
+                       <td> ${element.rubro}</td> 
+                       <td id="precioCol"> ${element.precio}</td> 
+                       </tr>`;
+  });
+  let tablaTotal = document.getElementById("trTotal");
+  tablaTotal.innerHTML = "";
+  tablaTotal.innerHTML = `<tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="table-light">Total  $ ${total}</td>`;
 }
 
-alert(`Cantidad de articulos ${i} \nSu descuento es $${descuentoFinal}\nSu Total es $${precioFinal} `);
+function suma(lista) {
+  for (let plu of lista) {
+    console.log(plu.precio);
+    total += parseFloat(plu.precio);
+  }
+}
+
+const lista = [];
+let total = 0;
+
+// Validacion del form
+(() => {
+  "use strict";
+
+  const forms = document.querySelectorAll(".needs-validation");
+
+  Array.from(forms).forEach((form) => {
+    form.addEventListener(
+      "click",
+      (event) => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        form.classList.add("was-validated");
+      },
+      false
+    );
+  });
+})();
