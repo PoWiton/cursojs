@@ -10775,4 +10775,8 @@ body {
   background: linear-gradient(to right, rgb(39, 39, 39), #464444);
 }
 
+.tablaRubros {
+  width: 50%;
+}
+
 /*# sourceMappingURL=custom.css.map */

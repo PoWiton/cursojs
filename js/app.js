@@ -65,20 +65,39 @@ function cargarTabla(lista) {
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td class="table-light">Total  $ ${total}</td>`;
+                            <td class="table-light">Total  $ ${total}</td>
+                            </tr>`;
 }
 
-function suma(lista) {
-  for (let plu of lista) {
-    console.log(plu.precio);
+function filtradoRubros() {
+  const listaAlimentos = lista.filter((plu) => plu.rubro == "Alimentos");
+  const listaPerfumeria = lista.filter((plu) => plu.rubro == "Perfumeria");
+  for (let plu of listaAlimentos) {
+    totalAlimentos += parseFloat(plu.precio);
+  }
+  for (let plu of listaPerfumeria) {
+    totalPerfumeria += parseFloat(plu.precio);
+  }
+
+  let tablaRubros = document.getElementById("trRubros");
+  tablaRubros.innerHTML = "";
+  tablaRubros.innerHTML = `<tr>
+                            <td>$${totalAlimentos}</td>
+                            <td>$${totalPerfumeria}</td>
+                            </tr>`;
+}
+function suma(arreglo) {
+  for (let plu of arreglo) {
     total += parseFloat(plu.precio);
   }
 }
 
 const lista = [];
-let total = 0;
 
-// Validacion del form
+let total = 0;
+let totalPerfumeria = 0;
+let totalAlimentos = 0;
+//validacion form//
 (() => {
   "use strict";
 
