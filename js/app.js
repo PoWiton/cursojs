@@ -1,15 +1,7 @@
-function calcDescuento() {
-  let descuento = (total * document.getElementById("valDescuento").value) / 100;
-  let precioFinal = total - descuento;
-  let tablaTotal = document.getElementById("trTotal");
-  tablaTotal.innerHTML = "";
-  tablaTotal.innerHTML = `<tr>
-                            <td></td>
-                            <td></td>
-                            <td class="table-light">Descuento $ ${descuento}</td>
-                            <td class="table-light">Total  $ ${precioFinal}</td>`;
-  lista.length = 0;
-}
+const lista = [];
+let total = 0;
+let totalPerfumeria = 0;
+let totalAlimentos = 0;
 
 class Item {
   nombre;
@@ -51,12 +43,14 @@ function cargarTabla(lista) {
   let tabla = document.getElementById("trRow");
   tabla.innerHTML = "";
   lista.forEach((element) => {
+    let pos = lista.indexOf(element);
     tabla.innerHTML += `
                     <tr>
                        <td> ${element.cantidad}</td>  
                        <td> ${element.nombre}</td> 
                        <td> ${element.rubro}</td> 
-                       <td id="precioCol"> ${element.precio}</td> 
+                       <td> ${element.precio}</td> 
+                       <td><input class="my-1 mx-1" type="button" id="${pos}" value="Eliminar" onclick="mostrarId(this.id)" /></td> 
                        </tr>`;
   });
   let tablaTotal = document.getElementById("trTotal");
@@ -65,8 +59,17 @@ function cargarTabla(lista) {
                             <td></td>
                             <td></td>
                             <td></td>
+                            <td></td>
                             <td class="table-light">Total  $ ${total}</td>
                             </tr>`;
+}
+
+function mostrarId(obj) {
+  let id = obj;
+  lista.splice(id, 1);
+  total = 0;
+  suma(lista);
+  cargarTabla(lista);
 }
 
 function filtradoRubros() {
@@ -92,11 +95,20 @@ function suma(arreglo) {
   }
 }
 
-const lista = [];
+// Calculo el descuento asignado y vacio el array.//
+function calcDescuento() {
+  let descuento = (total * document.getElementById("valDescuento").value) / 100;
+  let precioFinal = total - descuento;
+  let tablaTotal = document.getElementById("trTotal");
+  tablaTotal.innerHTML = "";
+  tablaTotal.innerHTML = `<tr>
+                            <td></td>
+                            <td></td>
+                            <td class="table-light">Descuento $ ${descuento}</td>
+                            <td class="table-light">Total  $ ${precioFinal}</td>`;
+  lista.length = 0;
+}
 
-let total = 0;
-let totalPerfumeria = 0;
-let totalAlimentos = 0;
 //validacion form//
 (() => {
   "use strict";
