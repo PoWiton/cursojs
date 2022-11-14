@@ -7,6 +7,33 @@ class Item {
   cantidad;
   rubro;
 }
+
+//tabla ultimo comprobante y filtro por rubros.
+function ultimoComprobante() {
+  lista2 = JSON.parse(localStorage.getItem("lista")); // creo el array desde el json guardado en el local
+  totallabel = lista2.reduce((suma, plu) => suma + plu.precio, 0); // hago la suma de todos los elementos precio
+  totalPerfumeria = 0;
+  totalAlimentos = 0;
+  const listaAlimentos = lista2.filter((plu) => plu.rubro == "Alimentos"); //genero un nueva lista con los elementos del rubro alimentos
+  const listaPerfumeria = lista2.filter((plu) => plu.rubro == "Perfumeria"); //genero un nueva lista con los elementos del rubro perfumeria
+  //recorro la lista nueva sumando los elementos precios de ese rubro
+  for (let plu of listaAlimentos) {
+    totalAlimentos += parseFloat(plu.precio);
+  }
+  //recorro la lista nueva sumando los elementos precios de ese rubro
+  for (let plu of listaPerfumeria) {
+    totalPerfumeria += parseFloat(plu.precio);
+  }
+  //genero la tabla con los totales.
+  let tablaRubros = document.getElementById("trRubros");
+  tablaRubros.innerHTML = "";
+  tablaRubros.innerHTML = `<tr>
+                            <td>$${totalAlimentos}</td>
+                            <td>$${totalPerfumeria}</td>
+                            <td>$${totallabel}</td>
+                            </tr>`;
+}
+
 //me traigo los valores del dom para generar los elementos de la lista//
 function ingresoPlu() {
   let plu = new Item();
@@ -34,6 +61,7 @@ function cargoPlu(lista) {
     lista.push(plu); //pushea los datos al array//
     suma(lista); // funcion que genera el Total//
     cargarTabla(lista); //invoca la funcion que carga la tabla que se muestra//
+    document.getElementById("guardaTicket").removeAttribute("disabled");
   }
 }
 //Recorre la lista y genera las tablas//
@@ -70,74 +98,78 @@ function eliminar(obj) {
   suma(lista);
   cargarTabla(lista);
 }
-//guarda el array en el localstorage y vacia el array, luego me traigo del localstorage el json , lo parseo y genero un nuevo array para
-//mostrar el total del ultimo ticket en un imput (lo hice todo en un una misma funcion para cumplir con la consigna)
+//guarda el array en el localstorage y vacia el array, invoco la funcion de totales del ultimo comprobante y deshabilito el boton de guardar ticket.
 function guardaTicket() {
   localStorage.setItem("lista", JSON.stringify(lista));
   lista.length = 0;
   total = 0;
   cargarTabla(lista);
-  let lista2 = JSON.parse(localStorage.getItem("lista"));
-  document.getElementById("totalUltimo").value = lista2.reduce((suma, plu) => suma + plu.precio, 0);
+  ultimoComprobante();
+  document.getElementById("formuMail").style.display = "inline";
+  document.getElementById("guardaTicket").setAttribute("disabled", "true");
 }
-//filtro totales por rubros y lleno la tabla asignada para esto.//
-function filtradoRubros() {
-  let totalPerfumeria = 0;
-  let totalAlimentos = 0;
-  const listaAlimentos = lista.filter((plu) => plu.rubro == "Alimentos");
-  const listaPerfumeria = lista.filter((plu) => plu.rubro == "Perfumeria");
-  for (let plu of listaAlimentos) {
-    totalAlimentos += parseFloat(plu.precio);
-  }
-  for (let plu of listaPerfumeria) {
-    totalPerfumeria += parseFloat(plu.precio);
-  }
 
-  let tablaRubros = document.getElementById("trRubros");
-  tablaRubros.innerHTML = "";
-  tablaRubros.innerHTML = `<tr>
-                            <td>$${totalAlimentos}</td>
-                            <td>$${totalPerfumeria}</td>
-                            </tr>`;
-}
 //recorro el array para generar el total del ticket//
 function suma(arreglo) {
   for (let plu of arreglo) {
     total += parseFloat(plu.precio);
   }
 }
+//api para enviar un email con los totales.
+function enviarMail() {
+  const options = {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "X-RapidAPI-Key": "d6cea0cc83msha6b6b810a3d0539p1a0e2djsn4680cbcd7ae8",
+      "X-RapidAPI-Host": "mail-sender4.p.rapidapi.com",
+    },
+    body: `{"username":"cursojsprueba@gmail.com","password":"kzrpkrrcvykpupux","reciever":"${mail}","title":"Resumen ult. comprobante","subject":"Resumen","htmlContent":"<table><thead><tr><th>Alimentos</th><th>Perfumeria</th><th>Total ult. comprobante</th></tr></thead><tbody><tr><td>$${totalAlimentos}</td><td>$${totalPerfumeria}</td><td>$${totallabel}</td></tr></tbody></table>"}`,
+  };
 
-// Calculo el descuento asignado sobre el total//
-function calcDescuento() {
-  let descuento = (total * document.getElementById("valDescuento").value) / 100;
-  let precioFinal = total - descuento;
-  let tablaTotal = document.getElementById("trTotal");
-  tablaTotal.innerHTML = "";
-  tablaTotal.innerHTML = `<tr>
-                            <td></td>
-                            <td></td>
-                            <td class="table-light">Descuento $ ${descuento}</td>
-                            <td class="table-light">Total  $ ${precioFinal}</td>`;
+  fetch("https://mail-sender4.p.rapidapi.com/mail/html-content", options)
+    .then((response) => response.json())
+    .then((response) => (document.getElementById("spinner").style.display = "none"))
+    .then((response) =>
+      swal.fire({
+        title: "Envio exitoso",
+        icon: "success",
+      })
+    )
+    .catch((err) => console.error(err));
 }
 
 //validacion form//
-(() => {
-  "use strict";
 
-  const forms = document.querySelectorAll(".needs-validation");
+document.getElementById("formu").addEventListener("submit", (e) => {
+  e.preventDefault();
+});
+document.getElementById("formuMail").addEventListener("submit", (e) => {
+  e.preventDefault();
 
-  Array.from(forms).forEach((form) => {
-    form.addEventListener(
-      "click",
-      (event) => {
-        if (!form.checkValidity()) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
+  validarCampos();
+});
+const validarCampos = () => {
+  //capturar mail ingresado
 
-        form.classList.add("was-validated");
-      },
-      false
-    );
-  });
-})();
+  const emailDatos = email.value.trim();
+
+  //validando campo email y invoco la API de envio de mail. hago visible el spinner
+  if (!emailDatos) {
+    document.getElementById("pMail").innerText = "Campo vacio o incorrecto";
+  } else if (!validaEmail(emailDatos)) {
+    document.getElementById("pMail").innerText = "Ingresa un e-mail valido";
+  } else {
+    document.getElementById("pMail").innerText = "";
+    mail = document.getElementById("email").value;
+    enviarMail();
+    document.getElementById("formuMail").style.display = "none";
+    document.getElementById("spinner").style.display = "inline-flex";
+  }
+};
+
+const validaEmail = (email) => {
+  return /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+    email
+  );
+};

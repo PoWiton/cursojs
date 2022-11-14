@@ -9,22 +9,22 @@
     <title>Simulador de facturador</title>
   </head>
   <body class="container">
-    <form class="row g-3 needs-validation" novalidate>
+    <form id="formu" class="row g-3">
       <div class="col-md-4">
         <label for="cantidad" class="form-label text-white">Cantidad</label>
         <input type="number" class="form-control" id="cantidad" value="1" step="any" required />
-        <div class="invalid-feedback">La cantidad no puede ser 0</div>
       </div>
+
       <div class="col-md-4">
         <label for="precio" class="form-label text-white">Precio</label>
         <input type="number" class="form-control" id="precio" value="" step="any" required />
-        <div class="invalid-feedback">Ingrese un precio</div>
       </div>
+
       <div class="col-md-6">
         <label for="descripcion" class="form-label text-white">Descripcion</label>
         <input type="text" class="form-control" id="descripcion" required />
-        <div class="invalid-feedback">Ingrese una descripcion</div>
       </div>
+
       <div class="col-md-3">
         <label for="rubro" class="form-label text-white">Rubro</label>
         <select class="form-select" id="rubro" required>
@@ -32,26 +32,16 @@
           <option>Alimentos</option>
           <option>Perfumeria</option>
         </select>
-        <div class="invalid-feedback">Por favor seleccione un rubro</div>
       </div>
 
       <div class="col-12">
-        <input class="my-1 mx-1" type="button" id="adiciona" value="Agregar" onclick="cargoPlu(lista)" />
+        <input class="my-1 mx-1" type="submit" id="adiciona" value="Agregar" onclick="cargoPlu(lista)" />
       </div>
     </form>
     <div class="d-flex">
-      <input class="my-1 mx-1" type="button" id="filtroRubro" value="Filtrado por rubro" onclick="filtradoRubros()" />
-      <input class="my-1 mx-1" type="button" id="guardaTicket" value="Guarda ticket" onclick="guardaTicket()" />
-      <div class="ms-auto p-2">
-        <label for="Total ult. ticket" class="form-label text-white">Total ult. Ticket</label>
-        <input type="text" class="form-control" id="totalUltimo" />
-      </div>
+      <input class="my-1 mx-1" type="button" id="guardaTicket" value="Guarda ticket" onclick="guardaTicket()" disabled />
     </div>
-    <div class="d-flex justify-content-center">
-      <label for="valDescuento" class="text-white my-1 mx-1">Ingrese un valor luego haga click en Descuento</label>
-      <input type="number" class="my-1 mx-1" id="valDescuento" min="1" max="99" />
-      <input class="my-1 mx-1" type="button" id="descuento" value="Descuento" onclick="calcDescuento()" />
-    </div>
+
     <table class="table table-hover table-dark">
       <thead>
         <tr>
@@ -70,11 +60,27 @@
         <tr>
           <th>Alimentos</th>
           <th>Perfumeria</th>
+          <th>Total ult. comprobante</th>
         </tr>
       </thead>
       <tbody id="trRubros"></tbody>
     </table>
+    <div class="text-center text-light" id="spinner" style="display: none">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+    <form id="formuMail" class="g-3" style="display: none">
+      <div class="col-md-3">
+        <label for="email" class="text-white">Enviar ult. comprobante por E-mail</label>
+        <input id="email" class="" type="email" />
+        <p id="pMail" class="text-white"></p>
+      </div>
+      <button class="col-md-3">Enviar</button>
+    </form>
+
     <script src="./js/bootstrap.js"></script>
     <script src="./js/app.js"></script>
+    <script src="./js/sweetalert2.all.min.js"></script>
   </body>
 </html>
